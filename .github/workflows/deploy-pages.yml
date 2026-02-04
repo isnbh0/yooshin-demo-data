@@ -32,8 +32,8 @@ jobs:
 
       - name: Build site
         run: |
-          mkdir -p _site
-          cp session-02/prompt-filler.html _site/index.html
+          mkdir -p _site/prompt-filler
+          cp session-02/prompt-filler.html _site/prompt-filler/index.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
