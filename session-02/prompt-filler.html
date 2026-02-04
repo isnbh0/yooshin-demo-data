@@ -204,6 +204,107 @@
     border-color: var(--ink-muted);
   }
 
+  .btn-example {
+    font-family: var(--font);
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--accent);
+    background: var(--accent-light);
+    border: 1px solid transparent;
+    border-radius: var(--radius);
+    padding: 0.4rem 0.9rem;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-example:hover {
+    border-color: var(--accent);
+  }
+
+  .panel-header-actions {
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  /* ── Confirm overlay ── */
+  .confirm-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,26,46,.35);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .confirm-overlay.visible {
+    display: flex;
+  }
+
+  .confirm-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    padding: 1.5rem;
+    max-width: 380px;
+    width: 90%;
+  }
+
+  .confirm-box p {
+    font-size: 0.88rem;
+    line-height: 1.6;
+    margin-bottom: 1.1rem;
+    color: var(--ink);
+  }
+
+  .confirm-box .confirm-warn {
+    font-size: 0.78rem;
+    color: var(--ink-muted);
+    margin-bottom: 1.1rem;
+  }
+
+  .confirm-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+  }
+
+  .btn-confirm-cancel {
+    font-family: var(--font);
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--ink-muted);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.45rem 1rem;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-confirm-cancel:hover {
+    color: var(--ink-light);
+    border-color: var(--ink-muted);
+  }
+
+  .btn-confirm-ok {
+    font-family: var(--font);
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: #fff;
+    background: var(--accent);
+    border: none;
+    border-radius: var(--radius);
+    padding: 0.45rem 1rem;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-confirm-ok:hover {
+    background: var(--accent-hover);
+  }
+
   /* ── Output panel ── */
   .output-col {
     position: sticky;
@@ -372,7 +473,10 @@
   <div class="panel">
     <div class="panel-header">
       <span class="panel-title">입력</span>
-      <button class="btn-clear" onclick="clearAll()" title="모든 필드 초기화">초기화</button>
+      <div class="panel-header-actions">
+        <button class="btn-example" onclick="fillExample()" title="예시 값으로 채우기">예시 채우기</button>
+        <button class="btn-clear" onclick="clearAll()" title="모든 필드 초기화">초기화</button>
+      </div>
     </div>
     <div class="panel-body">
 
@@ -422,6 +526,17 @@
   </div>
 
 </main>
+
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <p>입력한 내용을 예시 값으로 대체할까요?</p>
+    <div class="confirm-warn">현재 작성된 내용이 사라집니다.</div>
+    <div class="confirm-actions">
+      <button class="btn-confirm-cancel" onclick="closeConfirm()">취소</button>
+      <button class="btn-confirm-ok" onclick="applyExample()">대체하기</button>
+    </div>
+  </div>
+</div>
 
 <script>
 const STORAGE_KEY = 'yooshin-s2-prompt-filler';
@@ -675,6 +790,64 @@ function clearAll() {
   render();
   $name.focus();
 }
+
+// ── Example ──
+const EXAMPLE = {
+  name: '김유신',
+  dept: '총무부',
+  topic: '사무용품 구매 요청 처리',
+  context: `## 업무 개요
+총무부에서 각 부서의 사무용품 구매 요청을 접수하고, 승인·발주·검수까지 처리하는 업무입니다.
+
+## 주요 절차
+1. 각 부서에서 사무용품 구매 요청서를 작성하여 총무부에 제출
+2. 총무부 담당자가 요청 내용과 재고를 확인
+3. 건당 50만원 이상은 부서장 승인 필요
+4. 승인된 건에 대해 협력업체에 발주
+5. 납품 후 검수하고 비용 처리
+
+## 관련 문서/시스템
+- 구매 요청서 (사내 양식)
+- 재고 관리 대장 (엑셀)
+- 구매 승인 품의서
+- 거래처 목록
+- 검수 확인서
+
+## 특이사항
+- 긴급 요청은 구두 승인 후 후결 처리 가능
+- 분기별 사무용품 예산 한도 있음`,
+};
+
+const $confirmOverlay = document.getElementById('confirmOverlay');
+
+function hasContent() {
+  return fields.some(f => f.value.trim());
+}
+
+function fillExample() {
+  if (hasContent()) {
+    $confirmOverlay.classList.add('visible');
+  } else {
+    applyExample();
+  }
+}
+
+function closeConfirm() {
+  $confirmOverlay.classList.remove('visible');
+}
+
+function applyExample() {
+  $confirmOverlay.classList.remove('visible');
+  $name.value = EXAMPLE.name;
+  $dept.value = EXAMPLE.dept;
+  $topic.value = EXAMPLE.topic;
+  $context.value = EXAMPLE.context;
+  render();
+}
+
+$confirmOverlay.addEventListener('click', (e) => {
+  if (e.target === $confirmOverlay) closeConfirm();
+});
 
 // ── Init ──
 fields.forEach(f => f.addEventListener('input', render));
