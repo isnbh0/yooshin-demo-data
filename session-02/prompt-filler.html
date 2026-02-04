@@ -425,6 +425,41 @@
     background: var(--success);
   }
 
+  /* ── Attach note ── */
+  .attach-note {
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.6rem;
+    padding: 0.6rem 0.9rem;
+    font-size: 0.82rem;
+    color: var(--ink-light);
+    background: var(--accent-light);
+    border: 1px solid #b3e5fc;
+    border-radius: var(--radius);
+  }
+
+  .attach-note.visible {
+    display: flex;
+  }
+
+  .attach-note svg {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+    color: var(--accent);
+  }
+
+  .attach-note a {
+    color: var(--accent);
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .attach-note a:hover {
+    text-decoration: underline;
+  }
+
   /* ── Scrollbar ── */
   .output-scroll::-webkit-scrollbar { width: 6px; }
   .output-scroll::-webkit-scrollbar-track { background: transparent; }
@@ -498,9 +533,9 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label" for="context">업무 맥락 문서</label>
+        <label class="form-label" for="context">맥락</label>
         <div class="form-hint">세션 1 과제로 작성한 업무 맥락 문서를 붙여넣기 하세요</div>
-        <textarea class="form-textarea" id="context" rows="14" placeholder="업무 맥락 문서 내용을 여기에 붙여넣기..."></textarea>
+        <textarea class="form-textarea" id="context" rows="24" placeholder="업무 맥락 문서 내용을 여기에 붙여넣기..."></textarea>
       </div>
 
     </div>
@@ -523,6 +558,10 @@
         <div id="output"></div>
       </div>
     </div>
+    <div class="attach-note" id="attachNote">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+      <span>이 프롬프트와 함께 <a href="diagram-spec.md" download>업무 흐름도 작성 규격</a> 파일을 첨부하세요</span>
+    </div>
   </div>
 
 </main>
@@ -541,121 +580,6 @@
 <script>
 const STORAGE_KEY = 'yooshin-s2-prompt-filler';
 
-const DIAGRAM_SPEC = `# 업무 흐름도 작성 규격
-
-## 개요
-
-이 문서는 업무 프로세스를 Mermaid 다이어그램으로 표현할 때의 규격입니다. AI에게 업무 흐름도를 요청할 때 이 문서를 함께 첨부하세요.
-
-## 노드 유형
-
-업무 흐름도에는 **두 가지 유형의 노드만** 사용합니다.
-
-### 산출물 (Artifact)
-
-업무에서 만들어지거나 사용되는 문서, 데이터, 파일, 보고서 등.
-
-\`\`\`
-산출물명[("산출물 이름")]
-\`\`\`
-
-실린더(원통) 모양으로 표현됩니다.
-
-### 프로세스 (Process)
-
-사람이 수행하는 작업, 절차, 활동 등.
-
-\`\`\`
-프로세스명[["프로세스 이름"]]:::proc
-\`\`\`
-
-이중 테두리 사각형으로 표현되며, \`:::proc\` 스타일을 적용합니다.
-
-## 연결 규칙
-
-### 화살표 유형
-
-| 화살표 | 의미 | 사용 |
-|---|---|---|
-| \`-->\` | 생산/소비 | 프로세스가 산출물을 만들거나, 산출물이 프로세스의 주요 입력일 때 |
-| \`-.->\` | 참조 | 프로세스가 산출물을 참고만 할 때 (기준, 규정, 양식 등) |
-
-### 교대 규칙
-
-산출물과 프로세스는 **반드시 교대로** 연결합니다:
-
-- 산출물 → 프로세스 → 산출물 → 프로세스 → ...
-- 프로세스끼리 직접 연결하지 않습니다
-- 산출물끼리 직접 연결하지 않습니다
-
-### 흐름 방향
-
-\`flowchart TD\` (위에서 아래)를 사용합니다.
-
-## 스타일 정의
-
-다이어그램 마지막에 반드시 아래 스타일을 포함합니다:
-
-\`\`\`
-classDef proc fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-\`\`\`
-
-## 목표 복잡도
-
-- 전체 노드 수: **10~15개**
-- 산출물과 프로세스가 적절히 섞여야 합니다
-
-## 기본 템플릿
-
-\`\`\`
-flowchart TD
-    산출물1[("산출물 1")]
-    프로세스1[["프로세스 1"]]:::proc
-    산출물2[("산출물 2")]
-    프로세스2[["프로세스 2"]]:::proc
-    산출물3[("산출물 3")]
-
-    산출물1 --> 프로세스1 --> 산출물2 --> 프로세스2 --> 산출물3
-
-    classDef proc fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-\`\`\`
-
-## 예시: 출장 정산 업무
-
-아래는 출장 정산 업무를 이 규격으로 표현한 예시입니다 (10개 노드: 산출물 6, 프로세스 4).
-
-\`\`\`
-flowchart TD
-    출장규정[("출장 규정")]
-    출장계획서[("출장 계획서")]
-    출장승인[["출장 승인"]]:::proc
-    승인서[("출장 승인서")]
-    출장수행[["출장 수행"]]:::proc
-    영수증[("영수증/증빙")]
-    정산작성[["정산서 작성"]]:::proc
-    정산서[("출장 정산서")]
-    정산검토[["정산 검토 및 승인"]]:::proc
-    정산보고[("정산 완료 보고")]
-
-    출장계획서 --> 출장승인 --> 승인서
-    승인서 --> 출장수행 --> 영수증
-    영수증 --> 정산작성 --> 정산서
-    정산서 --> 정산검토 --> 정산보고
-
-    출장규정 -.-> 출장승인
-    출장계획서 -.-> 정산작성
-    출장규정 -.-> 정산검토
-
-    classDef proc fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-\`\`\`
-
-### 예시 해설
-
-- **실선 화살표** (\`-->\`): 출장계획서가 출장승인의 입력이 되고, 출장승인이 승인서를 만들어내는 흐름
-- **점선 화살표** (\`-.->\`): 출장규정은 승인과 검토 시 참고만 하므로 점선으로 연결
-- **교대 규칙**: 산출물과 프로세스가 번갈아 나타남
-- **출장규정**: 흐름의 시작이 아닌, 여러 프로세스가 참조하는 독립 산출물`;
-
 // ── Elements ──
 const $name = document.getElementById('name');
 const $dept = document.getElementById('dept');
@@ -665,6 +589,7 @@ const $output = document.getElementById('output');
 const $charCount = document.getElementById('charCount');
 const $copyBtn = document.getElementById('copyBtn');
 const $copyLabel = document.getElementById('copyLabel');
+const $attachNote = document.getElementById('attachNote');
 
 const fields = [$name, $dept, $topic, $context];
 
@@ -691,17 +616,17 @@ ${context}
 
 ## 작성 규격
 
-${DIAGRAM_SPEC}
+별도로 첨부한 「업무 흐름도 작성 규격」 문서를 반드시 참고하세요.
 
 ---
 
 ## 진행 방법
 
-위 규격에 맞는 Mermaid 업무 흐름도를 만들어주세요. 아래 절차를 따라주세요:
+첨부된 규격에 맞는 Mermaid 업무 흐름도를 만들어주세요. 아래 절차를 따라주세요:
 
 1. 먼저 내 업무 맥락과 흐름도 주제를 확인한 뒤, 해당 업무의 구체적인 절차에 대해 **인터뷰**해주세요.
 2. 한 번에 하나씩 질문하세요. 필요한 정보가 충분히 모일 때까지 계속 질문합니다.
-3. 충분한 정보가 모이면, 위 작성 규격에 맞는 Mermaid 다이어그램 코드를 작성해주세요.
+3. 충분한 정보가 모이면, 첨부된 작성 규격에 맞는 Mermaid 다이어그램 코드를 작성해주세요.
 4. 다이어그램은 10~15개 노드를 목표로 합니다.
 5. 작성 후 각 노드와 연결에 대한 간단한 해설을 덧붙여주세요.`;
 }
@@ -717,10 +642,12 @@ function render() {
     $output.textContent = text;
     $charCount.textContent = text.length.toLocaleString() + '자';
     $copyBtn.style.display = '';
+    $attachNote.classList.add('visible');
   } else {
     renderPlaceholder();
     $charCount.textContent = '';
     $copyBtn.style.display = 'none';
+    $attachNote.classList.remove('visible');
   }
   save();
 }
@@ -730,7 +657,7 @@ function renderPlaceholder() {
     { id: 'name', label: '이름' },
     { id: 'dept', label: '부서' },
     { id: 'topic', label: '흐름도 주제' },
-    { id: 'context', label: '업무 맥락 문서' },
+    { id: 'context', label: '맥락' },
   ];
 
   let html = '<div class="output-placeholder">';

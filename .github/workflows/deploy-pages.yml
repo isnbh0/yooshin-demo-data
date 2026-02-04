@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'session-02/prompt-filler.html'
+      - 'session-02/diagram-spec.md'
       - '.github/workflows/deploy-pages.yml'
   workflow_dispatch:
 
@@ -34,6 +35,7 @@ jobs:
         run: |
           mkdir -p _site/prompt-filler
           cp session-02/prompt-filler.html _site/prompt-filler/index.html
+          cp session-02/diagram-spec.md _site/prompt-filler/diagram-spec.md
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
