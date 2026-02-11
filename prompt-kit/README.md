@@ -18,7 +18,7 @@
 
 ```mermaid
 flowchart TD
-    지식((💭 내 머릿속 지식))
+    지식[("💭 내 머릿속 지식")]:::head
     프롬프트[("인터뷰 프롬프트")]
     인터뷰[["AI 인터뷰 진행"]]:::proc
     산출물[("최종 산출물")]
@@ -27,17 +27,18 @@ flowchart TD
     프롬프트 -.-> 인터뷰
 
     classDef proc fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef head fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000
 ```
 
 적합한 인터뷰 프롬프트가 없다면? **메타 프롬프트**가 그 프롬프트를 만들어줍니다:
 
 ```mermaid
 flowchart TD
-    목적((💭 인터뷰 목적·요구사항))
+    목적[("💭 인터뷰 목적·요구사항")]:::head
     메타[("메타 프롬프트")]
     설계[["AI와 대화하며 설계"]]:::proc
     프롬프트[("완성된 인터뷰 프롬프트")]
-    지식((💭 내 머릿속 지식))
+    지식[("💭 내 머릿속 지식")]:::head
     인터뷰[["새 대화에서 인터뷰 실행"]]:::proc
     산출물[("최종 산출물")]
 
@@ -47,6 +48,7 @@ flowchart TD
     프롬프트 -.-> 인터뷰
 
     classDef proc fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef head fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000
 ```
 
 [interview-prompt-builder.md](./interview-prompt-builder.md)가 이 메타 프롬프트입니다. AI에 붙여넣고 대화를 시작하세요.
