@@ -25,3 +25,9 @@
 마이크로툴링 데모용 HTML 마이크로 도구 사양서입니다. XLSX 템플릿과 텍스트를 입력하면 정규식으로 데이터를 추출하여 템플릿에 자동 입력합니다.
 
 [xlsx-parser-spec.md 보기](./xlsx-parser-spec.md)
+
+### 인터뷰 피커 (`interview-picker.md`)
+
+인터뷰 대화록을 평가하여 우수 참여자를 선정하는 프롬프트입니다. ChatGPT에 붙여넣고 인터뷰 대화록 파일을 첨부하면, 따뜻한 톤의 당첨 발표 문구를 생성합니다.
+
+[interview-picker.md 보기](./interview-picker.md)
