@@ -10,6 +10,7 @@
 | 2 | [prompt-refine-coach.md](./prompt-refine-coach.md) | S3 | 작성한 프롬프트의 품질을 개선하는 코치 |
 | 3 | [big-picture-interviewer.md](./big-picture-interviewer.md) | S4 | 복잡한 문제를 실행 가능한 하위 문제로 분해 |
 | 4 | [micro-tool-interviewer.md](./micro-tool-interviewer.md) | S4 | HTML 마이크로 도구 기획 사양서 작성 |
+| ⭐ | [interview-prompt-builder.md](./interview-prompt-builder.md) | — | 나만의 인터뷰 프롬프트를 만드는 메타 프롬프트 |
 
 ## 사용법
 
